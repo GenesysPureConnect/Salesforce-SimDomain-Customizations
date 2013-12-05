@@ -1,0 +1,125 @@
+<apex:page showHeader="false" controller="SidebarInteractionsController">
+	<apex:includeScript value="/support/console/29.0/integration.js" />  
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CustomizationResources,'style.css')}"/>
+    <apex:stylesheet value="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"/>
+    
+    <div class="Container" id="taskContainer"> 
+    	<div class="Component">
+        	<div class="ComponentHeader">
+            	<h4>
+                	Related Interactions to This Case
+				</h4>
+            </div>
+        	<div class="ComponentData" id="taskData"></div>
+    	</div>
+     </div>
+<style>
+th{
+    font-size:10px;
+}
+</style>
+<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+        
+        j$(document).ready(function () {
+                // expecting the object id that caused this event to fire
+                // event firing needs to cause partial page re-render
+                sforce.console.addEventListener('refreshEvent', function(result) {
+                        getTasks();        
+                });
+                // perform on initial render
+                getTasks();
+        });
+        
+        function getTasks(objectId) {
+	        sforce.console.getFocusedSubtabObjectId (function(result) {
+	                Visualforce.remoting.Manager.invokeAction(
+	            '{!$RemoteAction.SidebarInteractionsController.getTasks}',
+	            result.id, 
+	            processTasks,
+	            {escape:false}
+	        );        
+	        });
+        }
+        
+        function processTasks(result, event) {
+	        if(event.status) {
+	                 jsObj = JSON.parse(result);
+	                 renderTasks(jsObj);
+	                 
+	                 if(jsObj.length === 0) {
+	                         j$("#taskData").html('No results');
+	                 } 
+	                 else {                        
+	                         renderTasks(jsObj);
+	                 }
+	         } else {
+	                 console.log('Event ['+event.status+'] result ['+result+']');
+	         }
+        }
+        function getClass(task){
+        	if(task.Type == null){
+        		return '';
+        	}
+        
+            if(task.Type == 'Call'){
+                return 'phone';
+            }
+            
+            if(task.Type.toLowerCase().indexOf('mail') > -1){
+                return 'email';
+            }
+            
+            if(task.Type.toLowerCase().indexOf('chat') > -1){
+                return 'chat';
+            }
+            
+        }
+        function renderTasks(jsObj) {
+
+	        j$('#taskHeader').html(jsObj['objectLabelPlural']);
+	
+	        if(jsObj.length ==0){
+	            return;
+	        }
+	       
+	        var innerHtml = '<table class="table table-condensed table-hover table-striped"><tr>';
+	        innerHtml += '<th>Type</th><th>Subject</th><th>Date</th>';
+	        innerHtml += '</tr>';
+	
+	        for(var i=0 ; i<jsObj.length ; i++) {
+	            var obj = jsObj[i];
+	            
+	            var created = new Date(obj.CreatedDate);
+	            
+	            innerHtml += '<tr>';
+	            innerHtml += '  <td>';
+	            innerHtml += '    <div class="image16 ' + getClass(obj) + '"/>';
+	            innerHtml += '  </td>';
+	            innerHtml += '  <td>';
+	            innerHtml += '    <a href="#" onclick="javascript:openTask(\''+obj["Id"]+'\')">';
+	            innerHtml += obj.Subject;
+	            innerHtml += '    </a>';
+	            innerHtml += '  </td>';
+	            innerHtml += '  <td>';
+	            innerHtml += created.toLocaleDateString() + ' ' + created.toLocaleTimeString();
+	            innerHtml += '  </td>';
+	                                
+	            innerHtml += '</tr>';                    
+	        }
+	        innerHtml += '</table>';        
+	        j$("#taskData").html(innerHtml);
+	        j$("#taskContainer").show();
+        }                
+
+        function  openTask(taskId) {
+            // open the selected task and focus
+	        sforce.console.getFocusedPrimaryTabId(function (result) {
+	                sforce.console.openSubtab(result.id, '/'+taskId, true, '', null);
+	        });
+        } 
+</script>
+
+
+</apex:page>

@@ -1,0 +1,39 @@
+.image16{
+	height:16px;
+	width:16px;
+	background-size:contain;
+}
+
+.image32{
+	height:32px;
+	width:32px;
+	background-size:contain;
+}
+
+.phone{
+	background-image: url(phone.png);
+}
+
+.chat{
+	background-image: url(chat.png);
+}
+
+.telephone{
+	background-image: url(telephone.png);
+}
+
+.email{
+	background-image: url(email.png);
+}
+
+.high{
+	background-image: url(important.png);
+}
+
+.low{
+	background-image: url(important.png);
+}
+
+.web{
+	background-image: url(web.png);
+}
