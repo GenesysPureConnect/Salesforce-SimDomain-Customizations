@@ -1,0 +1,17 @@
+h1{
+    display:inline;
+}
+
+span{
+    float:right;
+}
+
+input{
+    float:right;
+    margin-left:5px;
+    margin-right:20px;
+}
+
+#AgentStats{
+    margin-top:10px;
+}
