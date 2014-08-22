@@ -1,0 +1,32 @@
+<apex:page controller="MyInteractionsController" >
+    <apex:includeScript value="/support/console/25.0/integration.js"/>
+    
+<apex:form >
+    <script type="text/javascript">
+        function openTask(id) {
+            window.location = "https://"+window.location.hostname + "/" + id;
+        }
+        
+    </script>
+        <apex:selectList value="{!filter}" size="1" multiselect="false">
+            <apex:selectOptions value="{!items}"/>
+        </apex:selectList>
+        <apex:commandButton value="Refresh">
+            <apex:actionSupport rerender="resultsPanel" />
+        </apex:commandButton>
+        <apex:outputPanel id="myInteractionsPanel" layout="block">
+           <apex:dataTable styleClass="tableStyle" value="{!MyTasks}" var="task" rowClasses="odd,even" >
+               <apex:column width="20">
+                   <apex:outputPanel rendered="{!CONTAINS(task.Subject,'Call')}"> <img src="https://webclient.inin.com/WebClient/img/Intc/Call_Normal_16_n_t.png"/></apex:outputPanel>
+                   <apex:outputPanel rendered="{!CONTAINS(task.Subject,'Email')}"> <img src="https://webclient.inin.com/WebClient/img/Intc/Email_Normal_16_n_t.png"/></apex:outputPanel>
+                   <apex:outputPanel rendered="{!CONTAINS(task.Subject,'Conference')}"> <img src="https://webclient.inin.com/WebClient/img/Intc/Call_Normal_16_n_t.png"/></apex:outputPanel>
+                   <apex:outputPanel rendered="{!CONTAINS(task.Subject,'Chat')}"> <img src="https://webclient.inin.com/WebClient/img/Intc/Chat_Normal_16_n_t.png"/></apex:outputPanel>
+               </apex:column>
+               <apex:column width="200">
+                   <apex:facet name="header"><b>Subject</b></apex:facet>
+                   <a href="#" onclick="openTask('{!task.id}');">{!task.Subject}</a>
+               </apex:column>
+           </apex:dataTable>
+        </apex:outputPanel>
+</apex:form>
+</apex:page>
