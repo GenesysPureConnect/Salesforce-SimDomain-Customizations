@@ -1,0 +1,5 @@
+<apex:page standardController="Task" extensions="binarysoftware.RecordingPlaybackController" >
+ <apex:outputLabel value="{!StatusMessage}"/>
+ <apex:iframe rendered="{!ShouldShowRecording}" src="{!Url}" scrolling="true" id="theIframe"  height="120px"/>
+
+</apex:page>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>This represents a common location for all items that are going be routed using the Interactive Intelligence universal queuing solution.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Direction__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The source of the object creation or change event</description>
+        <externalId>false</externalId>
+        <inlineHelpText>An example source for an inbound email reply would be &quot;External&quot;</inlineHelpText>
+        <label>Direction</label>
+        <length>80</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>IsRoutingComplete__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This is a Boolean that represents if we has successfully created an interaction.</description>
+        <externalId>false</externalId>
+        <label>IsRoutingComplete</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ItemId__c</fullName>
+        <deprecated>false</deprecated>
+        <description>ItemID represents the global id for the specific item (ex. Case) that we are going to route.</description>
+        <externalId>false</externalId>
+        <label>ItemId</label>
+        <length>50</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ObjectId__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <deprecated>false</deprecated>
+        <description>Notice, This has been deprecated and replaced by ItemID. Object Id represents the case specific id.</description>
+        <externalId>false</externalId>
+        <label>ObjectId</label>
+        <length>50</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>ObjectType__c</fullName>
+        <deprecated>false</deprecated>
+        <description>ObjectType represents the type of item that we are going to route. ex. Case  or Lead</description>
+        <externalId>false</externalId>
+        <label>ObjectType</label>
+        <length>60</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>QueueName__c</fullName>
+        <deprecated>false</deprecated>
+        <description>QueueName represents the Salesforce queue that the object came from.</description>
+        <externalId>false</externalId>
+        <label>QueueName</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SearchableID__c</fullName>
+        <deprecated>false</deprecated>
+        <description>SearchableID represents the local id that can be used by Salesforce&apos;s search.</description>
+        <externalId>false</externalId>
+        <label>SearchableID</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SenderEmail__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Sender Email represents the email address that is associated with the object. This is not applicable for all objects.</description>
+        <externalId>false</externalId>
+        <label>SenderEmail</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SenderName__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Sender Name represents the name that is associated with the object. This is not applicable for all objects.</description>
+        <externalId>false</externalId>
+        <label>SenderName</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>ININ Object Routing Queue</label>
+    <nameField>
+        <displayFormat>{YYYY}{MM}{DD}{0}</displayFormat>
+        <label>ININ Object Routing Queue Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>ININ Object Routing Queues</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Object Routing</fullName>
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <description>Contains all Salesforce triggers, objects and apex classes that is needed for use in combination with Interactive Intelligence Universal Queuing solution.</description>
+    <namespacePrefix>ObjectRouting</namespacePrefix>
+    <types>
+        <members>ObjectRoutingHelpers</members>
+        <members>PackageTests</members>
+        <members>StreamingPushTopicForUniversalQueuing</members>
+        <members>UniversalQueuingUninstallScript</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>RouteCase</members>
+        <members>RouteCaseBasedOnComment</members>
+        <members>RouteEmailResponse</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>Case.Originating_Queue__c</members>
+        <members>ININ_Lookup_Table__c.Salesforce_Queue_Name__c</members>
+        <members>ININ_Lookup_Table__c.Workgroup_Name__c</members>
+        <members>ININ_Object_Routing_Queue__c.Direction__c</members>
+        <members>ININ_Object_Routing_Queue__c.IsRoutingComplete__c</members>
+        <members>ININ_Object_Routing_Queue__c.ItemId__c</members>
+        <members>ININ_Object_Routing_Queue__c.ObjectId__c</members>
+        <members>ININ_Object_Routing_Queue__c.ObjectType__c</members>
+        <members>ININ_Object_Routing_Queue__c.QueueName__c</members>
+        <members>ININ_Object_Routing_Queue__c.SearchableID__c</members>
+        <members>ININ_Object_Routing_Queue__c.SenderEmail__c</members>
+        <members>ININ_Object_Routing_Queue__c.SenderName__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>ININ_Lookup_Table__c</members>
+        <members>ININ_Object_Routing_Queue__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>ININ_Lookup_Table__c-ININ Lookup Table Layout</members>
+        <members>ININ_Object_Routing_Queue__c-ININ Object Routing Queue Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>ININ_Lookup_Table__c.All</members>
+        <name>ListView</name>
+    </types>
+    <version>31.0</version>
+</Package>
