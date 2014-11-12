@@ -1,0 +1,308 @@
+<apex:page >
+
+    <apex:includeScript value="/support/console/25.0/integration.js"/>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"></script>
+    <style>
+
+.tabs-left > .nav-tabs {
+  border-bottom: 0;
+}
+
+.tab-content > .tab-pane,
+.pill-content > .pill-pane {
+  display: none;
+}
+
+.tab-content > .active,
+.pill-content > .active {
+  display: block;
+}
+
+.tabs-left > .nav-tabs > li,
+.tabs-right > .nav-tabs > li {
+  float: none;
+}
+
+.tabs-left > .nav-tabs > li > a,
+.tabs-right > .nav-tabs > li > a {
+  min-width: 74px;
+  margin-right: 0;
+  margin-bottom: 3px;
+}
+
+.tabs-left > .nav-tabs {
+  float: left;
+  margin-right: 19px;
+  border-right: 1px solid #ddd;
+}
+
+.tabs-left > .nav-tabs > li > a {
+  margin-right: -1px;
+  -webkit-border-radius: 4px 0 0 4px;
+     -moz-border-radius: 4px 0 0 4px;
+          border-radius: 4px 0 0 4px;
+}
+
+.tabs-left > .nav-tabs > li > a:hover,
+.tabs-left > .nav-tabs > li > a:focus {
+  border-color: #eeeeee #dddddd #eeeeee #eeeeee;
+}
+
+.tabs-left > .nav-tabs .active > a,
+.tabs-left > .nav-tabs .active > a:hover,
+.tabs-left > .nav-tabs .active > a:focus {
+  border-color: #ddd transparent #ddd #ddd;
+  *border-right-color: #ffffff;
+}
+
+.panel-default{
+    height:200px;
+    margin-left:10px;
+    width:255px;
+
+}
+
+.tabbable > ul {
+    height:200px;
+    margin-right:0px;
+}
+    </style>
+    <script >
+    var statServiceUrl = "https://UPDATE YOUR SERVER HERE/workgroupstatistics";
+    var statApp = angular.module('WorkgroupStatistics', []);
+
+    statApp.controller('StatController', function ($scope, $http, $timeout) {
+        var alertColors = ['', 'green', 'blue', 'orange','yellow', 'red'];
+
+        $scope.workgroupSelected = function(wgName){
+            console.log("setting workgroup to " + wgName);
+            $scope.workgroupName = wgName;
+            $scope.currentWorkgroup = $scope.allWorkgroupData[wgName];
+
+        };
+
+        $scope.getAlertColor = function(alert){
+
+            if(alert == 0) return null;
+
+            return {'background-color': alertColors[alert]};
+        }
+
+        function pollStats() {
+            $timeout(function () {
+                $http.get(statServiceUrl).success(function(data,status){
+                    $scope.statistics=data;
+
+                    function findHighestAlertForWorkgroup(data){
+
+                        function findHighestAlertInDataSet(data){
+                            var alert = 0;
+                            for(var alertKey in data){
+                                if(alertKey != "CurrentShift" && alertKey != "CurrentPeriod"){
+                                    var evalAlert = data[alertKey].alert.severity;
+                                    if(evalAlert > alert){
+                                        alert = evalAlert;
+                                    }
+                                }
+                            }
+
+                            return alert;
+                        }
+
+                        var alert = 0;
+
+                        alert = findHighestAlertInDataSet(data);
+
+                        if(alert == 5) return 5;
+
+                        var currentShiftAlert = findHighestAlertInDataSet(data.CurrentShift);
+
+                        if(currentShiftAlert > alert){
+                            alert = currentShiftAlert;
+                        }
+
+                        if(alert == 5) return 5;
+
+                        var currentPeriodAlert = findHighestAlertInDataSet(data.CurrentPeriod);
+
+                        if(currentPeriodAlert > alert){
+                            alert = currentPeriodAlert
+                        }
+
+                        return alert;
+                    }
+
+                    var wgList = {}
+                    var highestAlert = 0;
+                    for(var workgroup in data){
+                        var workgroupAlert = findHighestAlertForWorkgroup(data[workgroup]);
+                        wgList[workgroup] = workgroupAlert;
+
+                        if(workgroupAlert > highestAlert){
+                            highestAlert = workgroupAlert;
+                        }
+
+                    }
+
+                    var alertColor = $scope.getAlertColor(highestAlert);
+                    if(alertColor != null){
+                        sforce.console.setCustomConsoleComponentButtonStyle('background:'+ alertColor['background-color'] + ';');
+                    }
+                    $scope.allWorkgroupData = data;
+
+                    $scope.workgroups = wgList;
+
+                    if($scope.workgroupName != null){
+                        $scope.currentWorkgroup = $scope.allWorkgroupData[$scope.workgroupName];
+                    }
+
+                })
+
+                pollStats();
+
+            }, 3000);
+        }
+
+
+    //    $scope.workgroupName = "Marketing";
+        pollStats();
+
+
+
+    });
+
+    statApp.directive('statistic', function() {
+        return {
+            scope: {
+                statisticData: '=',
+                //bindAttr: '='
+            },
+            template: '<span class="badge" style="background:{{statisticData.alert.backgroundColor}};color:{{statisticData.alert.fontColor}}">{{statisticData.value}}</span>'
+        };
+    });
+
+
+
+    </script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <style>
+.alertCircle {
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    float:left;
+    margin-right:5px
+}
+    </style>
+<body ng-app="WorkgroupStatistics">
+    <div ng-controller="StatController">
+
+
+        <div style="float:left" class="tabbable tabs-left">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation"
+
+                ng-repeat="(name, alert) in workgroups"
+                ng-class="workgroupName == '{{name}}' ? 'active' : ''">
+
+
+                <a href="#" ng-click="workgroupSelected(name)" > <div class='alertCircle' ng-style="getAlertColor(alert)" ></div> {{name}}</a>
+            </li>
+        </ul>
+
+    </div>
+    <div style="float:left" ng-show='workgroupName == null'>
+        <div class="well">
+            Select a workgroup to view statistics.
+        </div>
+
+    </div>
+
+    <div style="float:left" ng-show='workgroupName != null'>
+
+        <div class="panel panel-default">
+
+            <div class="panel-body">
+                <table>
+                    <tr>
+                        <td> <div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.TotalAgents.severity)" ></div> <label>Total Agents:</label></td><td><statistic statistic-data="currentWorkgroup.TotalAgents"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td> <div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.LoggedIn.alert.severity)" ></div> <label>Logged In:</label></td><td><statistic statistic-data="currentWorkgroup.LoggedIn"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.NumberAvailableForACDInteractions.alert.severity)" ></div><label>Available:</label></td><td><statistic statistic-data="currentWorkgroup.NumberAvailableForACDInteractions"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.InteractionsWaiting.alert.severity)" ></div><label>Interactions Waiting:</label></td><td><statistic statistic-data="currentWorkgroup.InteractionsWaiting"></statistic></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="float:left" ng-show='workgroupName != null'>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Current Shift</h3>
+            </div>
+            <div class="panel-body">
+
+                <table>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentShift.InteractionsEntered.alert.severity)" ></div><label>Interactions Entered:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentShift.InteractionsEntered"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentShift.InteractionsAnswered.alert.severity)" ></div><label>Interactions Answered:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentShift.InteractionsAnswered"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentShift.InteractionsCompleted.alert.severity)" ></div><label>Interactions Completed:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentShift.InteractionsCompleted"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentShift.AverageTalkTime.alert.severity)" ></div><label>Average Wait Time:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentShift.AverageTalkTime"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentShift.AverageWaitTime.alert.severity)" ></div><label>Average Talk Time:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentShift.AverageWaitTime"></statistic></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div style="float:left" ng-show='workgroupName != null'>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Current Period</h3>
+            </div>
+            <div class="panel-body">
+
+                <table>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentPeriod.InteractionsEntered.alert.severity)" ></div><label>Interactions Entered:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentPeriod.InteractionsEntered"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentPeriod.InteractionsAnswered.alert.severity)" ></div><label>Interactions Answered:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentPeriod.InteractionsAnswered"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentPeriod.InteractionsCompleted.alert.severity)" ></div><label>Interactions Completed:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentPeriod.InteractionsCompleted"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentPeriod.AverageTalkTime.alert.severity)" ></div><label>Average Wait Time:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentPeriod.AverageTalkTime"></statistic></td>
+                    </tr>
+                    <tr>
+                        <td><div class='alertCircle' ng-style="getAlertColor(currentWorkgroup.CurrentPeriod.AverageWaitTime.alert.severity)" ></div><label>Average Talk Time:</label></td><td><statistic statistic-data="currentWorkgroup.CurrentPeriod.AverageWaitTime"></statistic></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</apex:page>
